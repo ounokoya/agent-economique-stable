@@ -1,0 +1,102 @@
+# Caddy Configuration - Public + Privé
+# Exemple de configuration mixte
+
+{
+    auto_https off
+    admin localhost:2019
+}
+
+# ════════════════════════════════════════
+# 🔒 SERVICES PRIVÉS (VPN uniquement)
+# ════════════════════════════════════════
+
+# Nomad UI - VPN UNIQUEMENT
+:80 {
+    bind 10.8.0.1  # ← Écoute SEULEMENT sur IP VPN
+    
+    reverse_proxy https://localhost:4646 {
+        transport http {
+            tls
+            tls_client_auth /etc/nomad.d/certs/client.pem /etc/nomad.d/certs/client-key.pem
+            tls_trusted_ca_certs /etc/nomad.d/certs/ca.pem
+        }
+    }
+    
+    log {
+        output file /var/log/caddy/nomad.log
+    }
+}
+
+# Health check - VPN UNIQUEMENT
+:8080 {
+    bind 10.8.0.1  # ← VPN uniquement
+    
+    respond /health 200
+    respond /ready 200
+}
+
+# ════════════════════════════════════════
+# 🌐 SERVICES PUBLICS
+# ════════════════════════════════════════
+
+# API publique (exemple)
+:3000 {
+    bind 0.0.0.0  # ← Accessible depuis Internet
+    
+    # Exemple 1: API REST locale
+    reverse_proxy localhost:8000
+    
+    # Exemple 2: Site statique
+    # root * /var/www/html
+    # file_server
+    
+    # Exemple 3: Webhook public
+    # route /webhook {
+    #     reverse_proxy localhost:9000
+    # }
+    
+    log {
+        output file /var/log/caddy/public-api.log
+    }
+}
+
+# ════════════════════════════════════════
+# 🔐 SERVICES PUBLICS AVEC AUTHENTIFICATION
+# ════════════════════════════════════════
+
+# Metrics publiques avec auth
+:9090 {
+    bind 0.0.0.0  # ← Public mais protégé
+    
+    # Authentification Basic
+    basicauth * {
+        admin $2a$14$Zkx19XLiW6VYouLHR5NmfOFU0z2GTNmpkT/5qqR7hx7wHfaXJCMGq
+    }
+    
+    reverse_proxy localhost:9091
+    
+    log {
+        output file /var/log/caddy/metrics.log
+    }
+}
+
+# ════════════════════════════════════════
+# 📊 MONITORING PUBLIC (Read-only)
+# ════════════════════════════════════════
+
+# Dashboard public en lecture seule
+:4000 {
+    bind 0.0.0.0
+    
+    # Désactiver méthodes dangereuses
+    @unsafe {
+        method POST PUT DELETE PATCH
+    }
+    respond @unsafe 405
+    
+    reverse_proxy localhost:3001
+    
+    log {
+        output file /var/log/caddy/dashboard.log
+    }
+}

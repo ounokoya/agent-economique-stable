@@ -1,0 +1,198 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Go workspace file
+go.work
+
+# Binaries compilés
+agent-economique
+scalping_live_bybit
+scalping_live_gateio
+scalping_engine
+signals_demo
+*.bin
+
+# Build artifacts
+/bin/
+/build/
+/dist/
+
+# IDE - VSCode
+.vscode/
+*.code-workspace
+
+# IDE - JetBrains
+.idea/
+*.iml
+*.iws
+
+# IDE - Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# Data files
+data/
+*.csv
+*.json
+*.parquet
+
+# Cache
+cache/
+.cache/
+*.cache
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.swp
+*.swo
+*~
+
+# Configuration files with secrets
+config/config.yaml
+config/config.yml
+*.env
+.env
+.env.local
+.env.*.local
+
+# API keys and credentials
+*_secrets.yaml
+*_secrets.yml
+*_credentials.json
+*.pem
+*.key
+!*.key.example
+
+# Nomad certificates (sauf exemples)
+*.crt
+ca.pem
+ca-key.pem
+server.pem
+server-key.pem
+client.pem
+client-key.pem
+cli.pem
+cli-key.pem
+
+# Trading data
+/data/binance/
+/data/gateio/
+/data/bybit/
+/data/backtest/
+/state/
+/backtest_result/
+
+# Node modules (si frontend)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python (si scripts auxiliaires)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+env/
+.venv
+
+# Archives
+*.zip
+*.tar.gz
+*.rar
+
+# Drafts et notes personnelles
+/drafts/
+/notes/
+*.draft
+*.scratch
+
+# Backups
+*.bak
+*.backup
+*~
+
+# CI/CD
+.circleci/
+.github/workflows/
+
+# Vendor (si vendoring Go)
+/vendor/
+
+# Debug files
+debug.log
+debug*.json
+
+# Performance profiling
+*.prof
+*.pprof
+cpu.prof
+mem.prof
+
+# Test coverage
+coverage.txt
+coverage.html
+*.coverage
+
+# Documentation générée
+/docs/generated/
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Linker files
+*.ilk
+
+# Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Shared objects
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Development certificates (keep examples)
+*.p12
+*.pfx
+!*.example.p12
+!*.example.pfx
