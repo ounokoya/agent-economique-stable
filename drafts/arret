@@ -1,0 +1,9 @@
+les date sont décalé , se sont les date d'ouverture ou de fermeture que tu affiche ? 
+
+le generateur de signaux est une fonction à par ? il recoit quoi en input, et retourne quoi en aout
+
+si les candle parcouru jusque a ce moment ne sont pas sufiant pour calculé les indicateur au debut sur les n premier kline au debut de parcourt des trades 
+
+c'est ca chaque extreme c'est sur n-1 ou n-2 mai le sens c'est sur les deux .  donc si cci sur n-1 surachat , mfi peux etre en extrme sur n-2 ainsi de suite tu comprends
+
+https://data.binance.vision/data/futures/um/daily/markPriceKlines/SOLUSDT/1m/SOLUSDT-1m-2025-11-05.zip

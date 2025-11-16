@@ -21,6 +21,36 @@ type Config struct {
 	CLI         CLIConfig         `yaml:"cli"`
 }
 
+// ScalpingMomentiumConfig holds config for the Scalping Momentium generator
+type ScalpingMomentiumConfig struct {
+	Timeframe      string  `yaml:"timeframe"`
+	ATRPeriod      int     `yaml:"atr_period"`
+	BodyPctMin     float64 `yaml:"body_pct_min"`
+	BodyATRMin     float64 `yaml:"body_atr_min"`
+	StochKPeriod   int     `yaml:"stoch_k_period"`
+	StochKSmooth   int     `yaml:"stoch_k_smooth"`
+	StochDPeriod   int     `yaml:"stoch_d_period"`
+	StochKLongMax  float64 `yaml:"stoch_k_long_max"`
+	StochKShortMin float64 `yaml:"stoch_k_short_min"`
+	TrailingCapPct float64 `yaml:"trailing_cap_pct"`
+	TrailingATRCoeff float64 `yaml:"trailing_atr_coeff"`
+	EnableStochCross bool   `yaml:"enable_stoch_cross"`
+
+	// Optional additional filters
+	EnableDMICross   bool    `yaml:"enable_dmi_cross"`
+	DMIPeriod        int     `yaml:"dmi_period"`
+
+	EnableMFIFilter  bool    `yaml:"enable_mfi_filter"`
+	MFIPeriod        int     `yaml:"mfi_period"`
+	MFIOversold      float64 `yaml:"mfi_oversold"`
+	MFIOverbought    float64 `yaml:"mfi_overbought"`
+
+	EnableCCIFilter  bool    `yaml:"enable_cci_filter"`
+	CCIPeriod        int     `yaml:"cci_period"`
+	CCIOversold      float64 `yaml:"cci_oversold"`
+	CCIOverbought    float64 `yaml:"cci_overbought"`
+}
+
 // BinanceDataConfig holds Binance-specific configuration
 type BinanceDataConfig struct {
 	CacheRoot   string              `yaml:"cache_root"`
@@ -82,11 +112,14 @@ type ValidationConfigYAML struct {
 
 // StrategyConfig holds trading strategy configuration
 type StrategyConfig struct {
-	Name               string                    `yaml:"name"`
-	ScalpingConfig     ScalpingStrategyConfig    `yaml:"scalping"`
-	Indicators         IndicatorsConfig          `yaml:"indicators"`
-	SignalGeneration   SignalGenerationConfig    `yaml:"signal_generation"`
-	PositionManagement PositionManagementConfig  `yaml:"position_management"`
+	Name               string                      `yaml:"name"`
+	ScalpingConfig     ScalpingStrategyConfig      `yaml:"scalping"`
+	ScalpingMomentium  ScalpingMomentiumConfig     `yaml:"scalping_momentium"`
+	DirectionConfig    DirectionStrategyConfig     `yaml:"direction"`
+	DirectionDMIConfig DirectionDMIStrategyConfig  `yaml:"direction_dmi"`
+	Indicators         IndicatorsConfig            `yaml:"indicators"`
+	SignalGeneration   SignalGenerationConfig      `yaml:"signal_generation"`
+	PositionManagement PositionManagementConfig    `yaml:"position_management"`
 }
 
 // ScalpingStrategyConfig holds scalping strategy configuration
@@ -111,6 +144,73 @@ type ScalpingStrategyConfig struct {
 	
 	// Timeframe
 	Timeframe string `yaml:"timeframe"`
+}
+
+// DirectionStrategyConfig holds direction strategy configuration
+// Config optimale identifiée: VWMA=20, Slope=6, ATR=8, Coef=0.25 (+6.03% capté)
+type DirectionStrategyConfig struct {
+	// Paramètres VWMA
+	VWMAPeriod int `yaml:"vwma_period"` // Période VWMA (optimal: 12-20 pour 5m)
+	
+	// Paramètres Pente
+	SlopePeriod int `yaml:"slope_period"` // Période calcul pente (optimal: 4-6)
+	
+	// Seuil pente
+	UseDynamicThreshold bool    `yaml:"use_dynamic_threshold"` // true = ATR, false = fixe
+	FixedThreshold      float64 `yaml:"fixed_threshold"`       // Utilisé si UseDynamicThreshold = false
+	
+	// ATR (si UseDynamicThreshold = true)
+	ATRPeriod      int     `yaml:"atr_period"`      // Période ATR (optimal: 8)
+	ATRCoefficient float64 `yaml:"atr_coefficient"` // Coefficient ATR (optimal: 0.25-0.50)
+	
+	// Confirmation
+	KConfirmation int `yaml:"k_confirmation"` // Nombre de bougies de confirmation
+	
+	// Timeframe
+	Timeframe string `yaml:"timeframe"` // 5m, 15m, 1h
+}
+
+// DirectionDMIStrategyConfig holds Direction+DMI strategy configuration
+// Stratégie hybride combinant VWMA (Direction) + DMI/DX/ADX (force tendance)
+type DirectionDMIStrategyConfig struct {
+	// Paramètres VWMA (hérités de Direction optimale)
+	VWMAPeriod int `yaml:"vwma_period"` // Période VWMA (optimal: 12-20 pour 5m)
+	
+	// Paramètres Pente
+	SlopePeriod int `yaml:"slope_period"` // Période calcul pente (optimal: 4-6)
+	
+	// Seuil pente (identique à Direction)
+	UseDynamicThreshold bool    `yaml:"use_dynamic_threshold"` // true = ATR, false = fixe
+	FixedThreshold      float64 `yaml:"fixed_threshold"`       // Utilisé si UseDynamicThreshold = false
+	
+	// ATR (si UseDynamicThreshold = true)
+	ATRPeriod      int     `yaml:"atr_period"`      // Période ATR (optimal: 8)
+	ATRCoefficient float64 `yaml:"atr_coefficient"` // Coefficient ATR (optimal: 0.25-0.50)
+	
+	// Confirmation
+	KConfirmation int `yaml:"k_confirmation"` // Nombre de bougies de confirmation
+	
+	// Paramètres DMI/DX/ADX (nouveaux)
+	DMIPeriod            int     `yaml:"dmi_period"`             // Période DMI (standard: 14)
+	DMISmooth            int     `yaml:"dmi_smooth"`             // Lissage DMI (standard: 14)
+	GammaGapDI           float64 `yaml:"gamma_gap_di"`           // Gap minimum DI+ vs DI- (%)
+	GammaGapDX           float64 `yaml:"gamma_gap_dx"`           // Gap minimum DX vs ADX (%)
+	WindowGammaValidate  int     `yaml:"window_gamma_validate"`  // Fenêtre validation gap (bougies)
+	WindowMatching       int     `yaml:"window_matching"`        // Fenêtre matching 3 conditions
+	
+	// Validations optionnelles (nouveaux flags)
+	RequireDICrossover   bool `yaml:"require_di_crossover"`   // Exiger croisement DI obligatoire
+	RequireDXValidation  bool `yaml:"require_dx_validation"`  // Exiger validation DX/ADX
+	RequireGapValidation bool `yaml:"require_gap_validation"` // Exiger validation des gaps minimum
+	
+	// Flags d'activation des signaux
+	EnableEntryTrend        bool `yaml:"enable_entry_trend"`         // Activer entrées tendance
+	EnableEntryCounterTrend bool `yaml:"enable_entry_counter_trend"` // Activer entrées contre-tendance
+	EnableExitTrend         bool `yaml:"enable_exit_trend"`          // Activer sorties tendance
+	EnableExitCounterTrend  bool `yaml:"enable_exit_counter_trend"`  // Activer sorties contre-tendance
+	
+	// Timeframe
+	Timeframe string `yaml:"timeframe"` // 5m, 15m, 1h
 }
 
 // SignalGenerationConfig holds signal generation configuration

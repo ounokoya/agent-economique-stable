@@ -131,8 +131,10 @@ env/
 *.rar
 
 # Drafts et notes personnelles
-/drafts/
 /notes/
+/out/
+/cache_data/
+/backtest_results/
 *.draft
 *.scratch
 

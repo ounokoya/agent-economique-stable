@@ -16,20 +16,20 @@ type Client struct {
 
 // Kline represents Bybit kline data
 type Kline struct {
-	OpenTime   time.Time
-	CloseTime  time.Time
-	Open       float64
-	High       float64
-	Low        float64
-	Close      float64
-	Volume     float64 // Volume in base asset (SOL)
+	OpenTime  time.Time
+	CloseTime time.Time
+	Open      float64
+	High      float64
+	Low       float64
+	Close     float64
+	Volume    float64 // Volume in base asset (SOL)
 }
 
 // NewClient creates a new Bybit client
 func NewClient() *Client {
 	// Production endpoint
 	client := bybit.NewBybitHttpClient("", "", bybit.WithBaseURL(bybit.MAINNET))
-	
+
 	return &Client{
 		client: client,
 	}
@@ -49,7 +49,7 @@ func (c *Client) GetKlines(ctx context.Context, symbol, interval string, limit i
 	now := time.Now()
 	intervalSeconds := getIntervalSeconds(interval)
 	startTime := now.Add(-time.Duration(limit*intervalSeconds) * time.Second)
-	
+
 	// Bybit uses milliseconds for timestamps
 	startMs := startTime.UnixMilli()
 	endMs := now.UnixMilli()

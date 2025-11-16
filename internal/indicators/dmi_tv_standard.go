@@ -19,6 +19,16 @@ func NewDMITVStandard(period int) *DMITVStandard {
 	}
 }
 
+// NewDMITVStandardWithPeriods crée une instance DMI TV Standard avec périodes distinctes
+// periodDI: période pour DI+/DI- (et ATR/DM lissés)
+// periodADX: période pour ADX (lissage de DX)
+func NewDMITVStandardWithPeriods(periodDI int, periodADX int) *DMITVStandard {
+	return &DMITVStandard{
+		period:   periodADX,
+		periodDI: periodDI,
+	}
+}
+
 // Calculate calcule le DMI selon la formule TradingView standard
 func (dmi *DMITVStandard) Calculate(high, low, close []float64) (plusDI, minusDI, adx []float64) {
 	n := len(high)

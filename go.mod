@@ -8,16 +8,15 @@ require (
 	github.com/Kucoin/kucoin-go-sdk v1.2.18
 	github.com/adshao/go-binance/v2 v2.8.7
 	github.com/antihax/optional v1.0.0
+	github.com/bybit-exchange/bybit.go.api v0.0.0-20250727214011-c9347d6804d6
 	github.com/gateio/gateapi-go/v6 v6.104.3
 	github.com/go-gota/gota v0.12.0
-	github.com/wuhewuhe/bybit.go.api v1.0.18
 	golang.org/x/time v0.14.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
 	github.com/bitly/go-simplejson v0.5.1 // indirect
-	github.com/bybit-exchange/bybit.go.api v0.0.0-20250727214011-c9347d6804d6 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/websocket v1.5.3 // indirect
